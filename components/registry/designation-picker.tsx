@@ -1,0 +1,13 @@
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useJourney } from "@/components/purchase-flow/journey-provider";
+import type { MarsRegion, RegistryDesignation } from "@/types/registry";
+
+export function DesignationPicker({region,designations}:{region:MarsRegion;designations:RegistryDesignation[]}) {
+  const router=useRouter(); const {state,update}=useJourney();
+  const [selected,setSelected]=useState<RegistryDesignation|undefined>(state.designation?.regionCode===region.code?state.designation:undefined);
+  useEffect(()=>{update({regionSlug:region.slug,...(state.regionSlug!==region.slug?{designation:undefined,packageId:undefined}:{})})},[region.slug,state.regionSlug,update]);
+  const choose=(item:RegistryDesignation)=>{if(item.status==="reserved")return;setSelected(item);update({regionSlug:region.slug,designation:item})};
+  return <><div className="designation-layout"><div><div className="designation-legend"><span><i className="available"/>Available</span><span><i className="chosen"/>Selected</span><span><i className="reserved"/>Reserved demo</span></div><div className="designation-map" role="group" aria-label={`${region.name} mock designations`}>{designations.map((item,index)=><button key={item.id} disabled={item.status==="reserved"} aria-label={`${item.id}, ${item.status}`} aria-pressed={selected?.id===item.id} className={selected?.id===item.id?"selected":""} onClick={()=>choose(item)}><span>{String(index+1).padStart(2,"0")}</span><small>{item.sector} / {item.block}</small></button>)}</div><p className="mock-label">DEVELOPMENT PREVIEW · Availability is deterministic mock data and does not represent live inventory.</p></div><aside className="designation-summary"><p className="eyebrow">SELECTED DESIGNATION</p>{selected?<><h2>{selected.id}</h2><dl><div><dt>COLLECTION</dt><dd>{region.name}</dd></div><div><dt>SECTOR / BLOCK</dt><dd>{selected.sector} / {selected.block}</dd></div><div><dt>COORDINATES</dt><dd>{Math.abs(selected.latitude).toFixed(2)}° {selected.latitude>=0?"N":"S"}<br/>{selected.longitude.toFixed(2)}° E</dd></div><div><dt>SYMBOLIC AREA</dt><dd>{selected.symbolicArea}</dd></div></dl></>:<div className="empty-selection"><div className="mini-orbit"/><h2>Select a place</h2><p>Choose any available coordinate tile to reveal its registry details.</p></div>}</aside></div><div className="sticky-action"><div>{selected?<><small>SELECTED</small><strong>{selected.id}</strong></>:<span>Choose an available designation</span>}</div><button disabled={!selected} onClick={()=>router.push("/register/package")}>CONTINUE TO PACKAGE ↗</button></div></>
+}

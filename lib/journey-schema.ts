@@ -1,0 +1,4 @@
+import { z } from "zod";
+export const designationSchema=z.object({id:z.string().regex(/^RPR-[A-Z]{3}-A\d{2}-\d{7}$/),regionCode:z.enum(["OLY","VAL","GAL","JEZ","ELY"]),sector:z.string().max(4),block:z.string().max(3),plot:z.number().int(),latitude:z.number(),longitude:z.number(),symbolicArea:z.string().max(80),status:z.enum(["available","reserved"])});
+export const personalizationSchema=z.object({giftMode:z.enum(["self","gift"]),recipient:z.string().trim().max(60),giftedBy:z.string().trim().max(60),message:z.string().trim().max(240),occasion:z.string().max(30),certificateDate:z.string().max(10),publicDisplay:z.boolean()});
+export const journeySchema=z.object({regionSlug:z.string().max(50).optional(),designation:designationSchema.optional(),packageId:z.string().max(30).optional(),personalization:personalizationSchema});
