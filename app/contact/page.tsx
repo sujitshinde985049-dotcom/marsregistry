@@ -1,0 +1,2 @@
+import { InnerPage } from "@/components/inner-page";
+export default function Contact(){return <InnerPage eyebrow="MISSION SUPPORT" title="Talk to the registry team" intro="Questions about gifting, future corporate orders or the registry? We would be glad to help."><div className="contact-card"><h2>Opening soon</h2><p>Customer support channels will be published before launch. This page currently marks the planned support destination.</p><a href="mailto:hello@redplanetregistry.com">hello@redplanetregistry.com</a></div></InnerPage>}
